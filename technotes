@@ -1,0 +1,3 @@
+Select three frames from each video (first frame, a frame from the middle, and another frame between the first and the middle)
+I did this requirement in the Frame.py code. This code gets specific frames from the video.
+First frame is in the 0. index. Last frame is in the middle index in all video and second frame is between them.
