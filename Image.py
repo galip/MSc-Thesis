@@ -92,7 +92,7 @@ def getRep(imgPath, fileName):
 
     # get alignedFace, save.
     name = '/home/galip/Desktop/alignedface/' + fileName + '.png'
-    cv2.imwrite(name, alignedFace)
+    cv2.imwrite(name, cv2.cvtColor(alignedFace, cv2.COLOR_BGR2RGB))
 
     start = time.time()
     rep = net.forward(alignedFace)
