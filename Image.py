@@ -100,7 +100,7 @@ def getRep(imgPath, fileName):
     #get repvector, create .txt files for each and save the vector
     name = '/home/galip/Desktop/repvector/' + fileName + '.txt'
     file = open(name, 'a')
-    file.writelines(str(rep))
+    np.savetxt(name, rep, delimiter=',')
     file.close()
 
 for dirpath, dirnames, filenames in walk("/home/galip/Desktop/test1/"):
