@@ -1,3 +1,4 @@
+#Not applied for vectors. We decided to apply blur to alignedface images.
 from scipy.ndimage.filters import gaussian_filter
 from os import walk
 
