@@ -1,0 +1,78 @@
+import glob, os
+from os import walk
+
+from sklearn.model_selection import KFold # import KFold
+import numpy as np
+import numpy as np1
+from sklearn import neighbors
+
+arr = []
+X = []
+y = []
+
+for infile in sorted(glob.glob('/home/galip/Desktop/Thesis/finalrepvector/*.txt')):
+    print "Current File Being Processed is: " + infile
+
+    a = infile.partition(".")[0].rsplit("_", 1).__getitem__(0)
+
+    #print a.split("/",7).__getitem__(6).rsplit("_", 2).__getitem__(0)
+
+    k = a.split("/",7).__getitem__(6).rsplit("_", 2).__getitem__(0)
+
+    y = np1.append(y, k)
+
+    #print ("y : ", y )
+
+    data = np.loadtxt(infile, skiprows=0)
+
+    arr.append(data)
+
+    X = np.array(arr)
+
+    #print np_arr
+
+
+#X = np.array([[10, 10], [-10, -10], [10, 11], [-10, -11], [11, 10], [-11, -10], [11, 11], [-11, -11]]) # create an array
+#y = np.array([001, 002, 001, 002, 001, 002, 001, 002]) # Create another array
+
+#X = np.array([[10, 10],[11, 11], [10, 11], [11, 10], [-11, -10], [-10, -10],[-10, -11], [-11, -11]]) # create an array
+#y = np.array([001, 001, 001, 001, 002, 002, 002, 002]) # Create another array
+
+X_b1 = X
+# np.array([[-1, -2], [-3, -4], [-10, -20], [-30, -40], [-5, -6], [-7, -8], [-9, -10], [-11, -12]]) # create an array
+y_b1 = y
+# np.array([001, 002, 001, 002, 001, 002, 001, 002]) # Create another array
+
+kf = KFold(n_splits=4) # Define the split - into 2 folds
+kf.get_n_splits(X) # returns the number of splitting iterations in the cross-validator
+
+#print(kf)
+
+KFold(n_splits=4, random_state=None, shuffle=False)
+
+for train_index, test_index in kf.split(X):
+  print('TRAIN:', train_index, 'TEST:', test_index)
+
+  X_train, X_test = X[train_index], X[test_index]
+  y_train, y_test = y[train_index], y[test_index]
+
+  print ('X_train: ', X_train)
+  print ('X test: ', X_test)
+  print ('Y_train: ', y_train)
+  print ('Y_test: ', y_test)
+
+  X_b1_train, X_b1_test = X_b1[train_index], X_b1[test_index]
+  y_b1_train, y_b1_test = y_b1[train_index], y_b1[test_index]
+
+  print ('X_b1_train: ', X_b1_train)
+  print ('X_b1 test: ', X_b1_test)
+  print ('Y_b1_train: ', y_b1_train)
+  print ('Y_b1_test: ', y_b1_test)
+
+  clf = neighbors.KNeighborsClassifier(1, weights='uniform')
+  clf.fit(X_train, y_train)
+
+  # z = clf.predict(np.c_[X_b1_test, y_b1_test])
+  print ("Test : {}".format(clf.predict(X_b1_test)))
+
+  print('accuracy {:.2f}'.format(clf.score(X_b1_test, y_b1_test)))
