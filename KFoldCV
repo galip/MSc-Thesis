@@ -8,45 +8,63 @@ from sklearn import neighbors
 
 arr = []
 X = []
-y = []
+Y = []
 
-for infile in sorted(glob.glob('/home/galip/Desktop/Thesis/finalrepvector/*.txt')):
-    print "Current File Being Processed is: " + infile
+arr1 = []
+X_b1 = []
+Y_b1 = []
 
-    a = infile.partition(".")[0].rsplit("_", 1).__getitem__(0)
+for l in range(4):
+ for index, item in enumerate(sorted(glob.glob('/home/galip/Desktop/Thesis/finalrepvector/*.txt'))):
+ #for infile in sorted(glob.glob('/home/galip/Desktop/Thesis/finalrepvector/*.txt')):
+   #print "Current File Being Processed is: " + item
 
-    #print a.split("/",7).__getitem__(6).rsplit("_", 2).__getitem__(0)
+   if ((index + l) % 4 == 0):
+
+    a = item.partition(".")[0].rsplit("_", 1).__getitem__(0)
 
     k = a.split("/",7).__getitem__(6).rsplit("_", 2).__getitem__(0)
 
-    y = np1.append(y, k)
+    Y = np1.append(Y, k)
 
-    #print ("y : ", y )
+    print ("y : ", Y )
 
-    data = np.loadtxt(infile, skiprows=0)
+    data = np.loadtxt(item, skiprows=0)
 
     arr.append(data)
 
     X = np.array(arr)
 
-    #print np_arr
+#blurredimage finalrepvector
+ for l in range(4):
+     for index, item in enumerate(sorted(glob.glob('/home/galip/Desktop/Thesis/repvec/*.txt'))):
+         # for infile in sorted(glob.glob('/home/galip/Desktop/Thesis/finalrepvector/*.txt')):
+         # print "Current File Being Processed is: " + item
+
+         if ((index + l) % 4 == 0):
+             a = item.partition(".")[0].rsplit("_", 1).__getitem__(0)
+
+             k = a.split("/", 7).__getitem__(6).rsplit("_", 2).__getitem__(0)
+
+             Y_b1 = np1.append(Y_b1, k)
+
+             print ("y : ", Y)
+
+             data = np.loadtxt(item, skiprows=0)
+
+             arr1.append(data)
+
+             X_b1 = np.array(arr1)
 
 
-#X = np.array([[10, 10], [-10, -10], [10, 11], [-10, -11], [11, 10], [-11, -10], [11, 11], [-11, -11]]) # create an array
-#y = np.array([001, 002, 001, 002, 001, 002, 001, 002]) # Create another array
+#X_b1 blurredfinalrepvector folder data.
+#Y_b1 blurredfinalrepvector folder label.
 
-#X = np.array([[10, 10],[11, 11], [10, 11], [11, 10], [-11, -10], [-10, -10],[-10, -11], [-11, -11]]) # create an array
-#y = np.array([001, 001, 001, 001, 002, 002, 002, 002]) # Create another array
-
-X_b1 = X
-# np.array([[-1, -2], [-3, -4], [-10, -20], [-30, -40], [-5, -6], [-7, -8], [-9, -10], [-11, -12]]) # create an array
-y_b1 = y
-# np.array([001, 002, 001, 002, 001, 002, 001, 002]) # Create another array
+#X_b1 = X
+#Y_b1 = Y
 
 kf = KFold(n_splits=4) # Define the split - into 2 folds
 kf.get_n_splits(X) # returns the number of splitting iterations in the cross-validator
-
-#print(kf)
 
 KFold(n_splits=4, random_state=None, shuffle=False)
 
@@ -54,25 +72,13 @@ for train_index, test_index in kf.split(X):
   print('TRAIN:', train_index, 'TEST:', test_index)
 
   X_train, X_test = X[train_index], X[test_index]
-  y_train, y_test = y[train_index], y[test_index]
-
-  print ('X_train: ', X_train)
-  print ('X test: ', X_test)
-  print ('Y_train: ', y_train)
-  print ('Y_test: ', y_test)
+  Y_train, Y_test = Y[train_index], Y[test_index]
 
   X_b1_train, X_b1_test = X_b1[train_index], X_b1[test_index]
-  y_b1_train, y_b1_test = y_b1[train_index], y_b1[test_index]
-
-  print ('X_b1_train: ', X_b1_train)
-  print ('X_b1 test: ', X_b1_test)
-  print ('Y_b1_train: ', y_b1_train)
-  print ('Y_b1_test: ', y_b1_test)
+  Y_b1_train, Y_b1_test = Y_b1[train_index], Y_b1[test_index]
 
   clf = neighbors.KNeighborsClassifier(1, weights='uniform')
-  clf.fit(X_train, y_train)
+  clf.fit(X_train, Y_train)
 
-  # z = clf.predict(np.c_[X_b1_test, y_b1_test])
   print ("Test : {}".format(clf.predict(X_b1_test)))
-
-  print('accuracy {:.2f}'.format(clf.score(X_b1_test, y_b1_test)))
+  print('accuracy {:.2f}'.format(clf.score(X_b1_test, Y_b1_test)))
