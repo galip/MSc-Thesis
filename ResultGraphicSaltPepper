@@ -1,0 +1,18 @@
+import matplotlib.pyplot as plt
+
+sharpaccuracy = 1.00
+saltpepper001accuracy = (1.00 + 1.00 + 1.00 + 1.00) / 4
+saltpepper002accuracy = (1.00 + 0.99 + 1.00 + 1.00) / 4
+saltpepper005accuracy = (0.99 + 0.98 + 0.99 + 0.99) / 4
+saltpepper01accuracy = (0.86 + 0.87 + 0.85 + 0.87) / 4
+saltpepper02accuracy = (0.44 + 0.47 + 0.43 + 0.54) / 4
+saltpepper03accuracy = (0.15 + 0.21 + 0.15 + 0.13) / 4
+saltpepper04accuracy = (0.04 + 0.03 + 0.03 + 0.02) / 4
+saltpepper05accuracy = (0.02 + 0.01 + 0.01 + 0.02) / 4
+
+plt.plot([0,1,2,3,4,5,6,7,8], [sharpaccuracy,saltpepper001accuracy,saltpepper002accuracy,saltpepper005accuracy,
+                               saltpepper01accuracy,saltpepper02accuracy,saltpepper03accuracy,
+                               saltpepper04accuracy,saltpepper05accuracy], 'ro', linestyle='-')
+plt.axis([0, 10, 0, 1.01])
+plt.title("Salt&Pepper")
+plt.show()
