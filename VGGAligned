@@ -87,19 +87,26 @@ def getRep(imgPath, fileName):
         raise Exception("Unable to load image: {}".format(imgPath))
     rgbImg = cv2.cvtColor(bgrImg, cv2.COLOR_BGR2RGB)
 
+    sharpImgPath = "/home/galip/Desktop/Thesis/data/" + fileName + ".jpg"
+    sharpBgrImg = cv2.imread(sharpImgPath)
+
+    if sharpBgrImg is None:
+        raise Exception("Unable to load image: {}".format(imgPath))
+    sharpRgbImg = cv2.cvtColor(sharpBgrImg, cv2.COLOR_BGR2RGB)
+
     if args.verbose:
         print("  + Original size: {}".format(rgbImg.shape))
 
     start = time.time()
 
-    bb = align.getLargestFaceBoundingBox(rgbImg)
+    bb = align.getLargestFaceBoundingBox(sharpRgbImg)
 
     #get facial landmark, save.
     #print("bb : ", bb)
-    name = '/home/galip/Desktop/VGG/sharpdata/landmark/' + fileName + '.txt'
-    file = open(name, 'a')
-    file.writelines(str(bb))
-    file.close()
+    #name = '/home/galip/Desktop/VGG/sharpdata/landmark/' + fileName + '.txt'
+    #file = open(name, 'a')
+    #file.writelines(str(bb))
+    #file.close()
 
     if bb is None:
         raise Exception("Unable to find a face: {}".format(imgPath))
@@ -107,21 +114,25 @@ def getRep(imgPath, fileName):
         print("  + Face detection took {} seconds.".format(time.time() - start))
 
     start = time.time()
-    alignedFace = align.align(args.imgDim, rgbImg, bb,
+    #alignedFace = align.align(args.imgDim, rgbImg, bb,
+    #                          landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+
+    alignedFace = align.alignDistortedImage(args.imgDim, rgbImg, sharpRgbImg, bb,
                               landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+
     if alignedFace is None:
         raise Exception("Unable to align image: {}".format(imgPath))
     if args.verbose:
         print("  + Face alignment took {} seconds.".format(time.time() - start))
 
     # get alignedFace, save.
-    name = '/home/galip/Desktop/VGG/sharpdata/alignedface/' + fileName + '.png'
+    name = '/home/galip/Desktop/VGG/Saltpepper/saltpeppersource05/alignedface05/' + fileName + '.png'
     #name = '/home/galip/Desktop/Thesis/alignedface/' + fileName + '.png'
     cv2.imwrite(name, cv2.cvtColor(alignedFace, cv2.COLOR_BGR2RGB))
 
 
 
-for dirpath, dirnames, filenames in walk("/home/galip/Desktop/data/"):
+for dirpath, dirnames, filenames in walk("/home/galip/Desktop/VGG/Saltpepper/saltpeppersource05/saltpepper05/"):
 #for dirpath, dirnames, filenames in walk("/home/galip/Desktop/Thesis/data/"):
     print(filenames)
     print(dirpath)
