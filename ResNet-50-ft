@@ -1,0 +1,57 @@
+import caffe
+import numpy as np
+from os import walk
+import sys
+# http://stackoverflow.com/questions/33828582/vgg-face-descriptor-in-python-with-caffe
+
+#PROTO = "VGG_FACE_deploy.prototxt"
+PROTO = "resnet50_ft.prototxt"
+#MODEL = "VGG_FACE.caffemodel"
+MODEL = "resnet50_ft.caffemodel"
+TEST = caffe.TEST
+MODEL_NAME = "VGG_FACE"
+VECTOR_FOLDER_NAME = "VGGFace_vecs"
+VECTOR_LAYER = 'pool5/7x7_s1'
+
+for dirpath, dirnames, filenames in walk("/home/galip/Desktop/SeNet/GaussianBlur/blurredsource5/alignedface5/"):
+#for dirpath, dirnames, filenames in walk("/home/galip/Desktop/Thesis/data/"):
+    #print(filenames)
+    #print(dirpath)
+
+    #count+=1
+    #print(count)
+
+    for f in filenames:
+        #print(f)
+        imgPath = dirpath + f
+        img = caffe.io.load_image(imgPath)
+        img = img[:,:,::-1]*255.0 # convert RGB->BGR
+        avg = [img[:,:,0].mean(), img[:,:,1].mean(), img[:,:,2].mean()]
+        #avg = np.array([93.5940, 104.7624, 129.1863])  # BGR mean values
+        img = img - avg # subtract mean (numpy takes care of dimensions :)
+
+        img = img.transpose((2,0,1))
+        img = img[None,:] # add singleton dimension
+
+        caffe.set_mode_cpu()
+
+        #print("Network is being created.")
+        net = caffe.Net(PROTO, MODEL, TEST)
+
+        net.forward_all( data = img )
+        vector = net.blobs[VECTOR_LAYER].data[0]
+
+        norm = np.linalg.norm(vector)
+
+        vector = vector / norm
+
+        #print(vector.tolist());
+
+        #print(np.linalg.norm(vector))
+        #print(np.size(vector))
+        #print("---deep learning---")
+
+        name = '/home/galip/Desktop/SeNet/GaussianBlur/blurredsource5/repvector5/' + f.partition(".")[0] + '.txt'
+        file = open(name, 'a')
+        np.savetxt(name, vector, delimiter=",")
+        file.close()
