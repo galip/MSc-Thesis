@@ -1,0 +1,17 @@
+import matplotlib.pyplot as plt
+
+sharpaccuracy = 1.00
+gaussiannoise10accuracy = (1.00 + 1.00 + 1.00 + 1.00) / 4
+gaussiannoise20accuracy = (1.00 + 0.99 + 1.00 + 1.00) / 4
+gaussiannoise40accuracy = (0.72 + 0.69 + 0.72 + 0.71) / 4
+gaussiannoise60accuracy = (0.20 + 0.21 + 0.19 + 0.22) / 4
+gaussiannoise80accuracy = (0.06 + 0.08 + 0.08 + 0.06) / 4
+gaussiannoise100accuracy = (0.02 + 0.06 + 0.03 + 0.03) / 4
+gaussiannoise120accuracy = (0.01 + 0.02 + 0.03 + 0.02) / 4
+gaussiannoise140accuracy = (0.02 + 0.03 + 0.03 + 0.02) / 4
+
+plt.plot([0,1,2,3,4,5,6,7,8], [sharpaccuracy,gaussiannoise10accuracy,gaussiannoise20accuracy,gaussiannoise40accuracy,gaussiannoise60accuracy,
+                               gaussiannoise80accuracy,gaussiannoise100accuracy,gaussiannoise120accuracy,gaussiannoise140accuracy], 'ro', linestyle='-')
+plt.axis([0, 9, 0, 1.01])
+plt.title("Gaussian Noise Accuracy Rate")
+plt.show()
