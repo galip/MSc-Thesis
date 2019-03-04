@@ -33,6 +33,13 @@ np.set_printoptions(precision=2)
 
 import openface
 
+import rectangle
+
+import dlib
+
+print("startttt")
+count = 0
+
 fileDir = os.path.dirname(os.path.realpath(__file__))
 modelDir = os.path.join(fileDir, '..', 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
@@ -51,30 +58,97 @@ parser.add_argument('--dlibFacePredictor', type=str, help="Path to dlib's face p
 parser.add_argument('--networkModel', type=str, help="Path to Torch network model.",
                     default=os.path.join(openfaceModelDir, 'nn4.small2.v1.t7'))
 parser.add_argument('--imgDim', type=int,
-                    help="Default image dimension.", default=96)
+                    help="Default image dimension.", default=112)
 parser.add_argument('--verbose', action='store_true')
 
 args = parser.parse_args()
 print("args : ", args)
 
+if args.verbose:
+    print("Argument parsing and loading libraries took {} seconds.".format(
+        time.time() - start))
+
 start = time.time()
 align = openface.AlignDlib(args.dlibFacePredictor)
 
 net = openface.TorchNeuralNet(args.networkModel, args.imgDim)
+if args.verbose:
+    print("Loading the dlib and OpenFace models took {} seconds.".format(
+        time.time() - start))
 
-count = 0
+def getRep(imgPath, fileName):
 
-for dirpath, dirnames, filenames in walk("/home/galip/Desktop/Thesis/blurred5/blurred5alignedface/"):
+    if args.verbose:
+        print("Processing {}.".format(imgPath))
+    bgrImg = cv2.imread(imgPath)
+    print ("imPath : ", imgPath)
+
+    sharpImgPath = "/home/galip/Desktop/Thesis/data/" + fileName + ".jpg"
+    sharpBgrImg = cv2.imread(sharpImgPath)
+
+    if sharpBgrImg is None:
+        raise Exception("Unable to load image: {}".format(imgPath))
+    sharpRgbImg = cv2.cvtColor(sharpBgrImg, cv2.COLOR_BGR2RGB)
+
+    if bgrImg is None:
+        raise Exception("Unable to load image: {}".format(imgPath))
+    rgbImg = cv2.cvtColor(bgrImg, cv2.COLOR_BGR2RGB)
+
+    if args.verbose:
+        print("  + Original size: {}".format(rgbImg.shape))
+
+    start = time.time()
+
+    #name = '/home/galip/Desktop/Thesis/Blurred/blurredsource8/testlandmark/' + fileName + '.txt'
+    #print name
+
+    #f = open(name, "r")
+    #bb = f.read()
+
+    bb = align.getLargestFaceBoundingBox(sharpRgbImg)
+
+    #get facial landmark, save.
+    #print("bb : ", bb)
+    #name = '/home/galip/Desktop/Thesis/landmark/' + fileName + '.txt'
+    #file = open(name, 'a')
+    #file.writelines(str(bb))
+    #file.close()
+
+    if bb is None:
+        raise Exception("Unable to find a face: {}".format(imgPath))
+    if args.verbose:
+        print("  + Face detection took {} seconds.".format(time.time() - start))
+
+    start = time.time()
+    alignedFace = align.alignDistortedImage(args.imgDim, rgbImg, sharpRgbImg, bb,
+                              landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+    if alignedFace is None:
+        raise Exception("Unable to align image: {}".format(imgPath))
+    if args.verbose:
+        print("  + Face alignment took {} seconds.".format(time.time() - start))
+
+    # get alignedFace, save.
+    name = '/home/galip/Desktop/InsightFace/Contrast/contrastsource5/alignedface5/' + fileName + '.png'
+    #name = '/home/galip/Desktop/Thesis/alignedface/' + fileName + '.png'
+    cv2.imwrite(name, cv2.cvtColor(alignedFace, cv2.COLOR_BGR2RGB))
+
+    #start = time.time()
+    #rep = net.forward(alignedFace)
+
+    #get repvector, create .txt files for each and save the vector
+    #name = '/home/galip/Desktop/Thesis/Blurred/blurredsource8/repvector8/' + fileName + '.txt'
+    #name = '/home/galip/Desktop/InsightFace/GaussianBlur/blurredsource1/repvector1/' + fileName + '.txt'
+    #file = open(name, 'a')
+    #np.savetxt(name, rep, delimiter=',')
+    #file.close()
+
+for dirpath, dirnames, filenames in walk("/home/galip/Desktop/InsightFace/Contrast/contrastsource5/contrast5/"):
+#for dirpath, dirnames, filenames in walk("/home/galip/Desktop/Thesis/data/"):
+    print(filenames)
+    print(dirpath)
 
     for f in filenames:
-     #d =  getRep(dirpath + f, f.partition(".")[0])
-     alignedFace = cv2.imread("/home/galip/Desktop/Thesis/blurred5/blurred5alignedface/" + f)
-     rep = net.forward(alignedFace)
-
-     name = '/home/galip/Desktop/Thesis/blurred5/blurred5RepVector/' + f.partition(".")[0] + '.txt'
-     file = open(name, 'a')
-     np.savetxt(name, rep, delimiter=',')
-     file.close()
+     d =  getRep(dirpath + f, f.partition(".")[0])
+     print(f.partition(".")[0])
      count += 1
-
-     print count
+     print(count)
