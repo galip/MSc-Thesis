@@ -1,0 +1,87 @@
+import glob, os
+from os import walk
+
+from sklearn.model_selection import KFold # import KFold
+import numpy as np
+import numpy as np1
+from sklearn import neighbors
+
+arr = []
+X = []
+Y = []
+
+#sharp data
+for l in range(4):
+ for index, item in enumerate(sorted(glob.glob('/home/galip/Desktop/VGG/finalrepvector/*.txt'))):
+   #print "Current File Being Processed is: " + item
+
+   if ((index + l) % 4 == 0):
+    print("index : ", index)
+
+    a = item.partition(".")[0].rsplit("_", 1).__getitem__(0)
+    print("a : ", a)
+
+    k = a.split("/",7).__getitem__(6).rsplit("_", 2).__getitem__(0)
+    print("k : ", k )
+
+    Y = np1.append(Y, k)
+
+    #print ("y : ", Y )
+
+    data = np.loadtxt(item, skiprows=0)
+
+    arr.append(data)
+
+    X = np.array(arr)
+
+#X_b1 blurredfinalrepvector folder data.
+#Y_b1 blurredfinalrepvector folder label.
+
+arr1 = []
+Xb1 = []
+Yb1 = []
+
+for p in range(4):
+ for index, item in enumerate(sorted(glob.glob('/home/galip/Desktop/VGG/ContrastVariations/contrastvariations09finalrepvector/*.txt'))):
+   print ("Current File Being Processed is: " + item)
+
+   if ((index + p) % 4 == 0):
+
+    a = item.partition(".")[0].rsplit("_", 1).__getitem__(0)
+
+    k = a.split("/",8).__getitem__(7).rsplit("_", 2).__getitem__(0)
+
+    Yb1 = np1.append(Yb1, k)
+
+    #print ("y : ", Yb1 )
+
+    data = np.loadtxt(item, skiprows=0)
+
+    arr1.append(data)
+
+    Xb1 = np.array(arr1)
+
+X_b1 = Xb1
+Y_b1 = Yb1
+
+print ("Y_b1 : ", Y_b1)
+
+kf = KFold(n_splits=4) # Define the split - into 2 folds
+kf.get_n_splits(X) # returns the number of splitting iterations in the cross-validator
+
+KFold(n_splits=4, random_state=None, shuffle=False)
+
+for train_index, test_index in kf.split(X):
+  #print('TRAIN:', train_index, 'TEST:', test_index)
+
+  X_train, X_test = X[train_index], X[test_index]
+  Y_train, Y_test = Y[train_index], Y[test_index]
+
+  X_b1_train, X_b1_test = X_b1[train_index], X_b1[test_index]
+  Y_b1_train, Y_b1_test = Y_b1[train_index], Y_b1[test_index]
+
+  clf = neighbors.KNeighborsClassifier(1, weights='uniform')
+  clf.fit(X_train, Y_train)
+
+  print ("Test : {}".format(clf.predict(X_b1_test)))
+  print('accuracy {:.2f}'.format(clf.score(X_b1_test, Y_b1_test)))
