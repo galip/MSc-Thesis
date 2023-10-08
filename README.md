@@ -6,3 +6,5 @@ The second deep learning architecture will be resnet-50 model which is trained o
 The third one is InsightFace architecture (https://github.com/deepinsight/insightface) and the model is LResNet100E-IR,ArcFace@ms1m-refine-v2. They used Mtcnn alignment process but we skipped this since we used dlib's alignment as it is used in the OpenFace project already.
 
 You will find the technical details in the techNotes folder.
+
+Published article: https://ieeexplore.ieee.org/document/9067941
